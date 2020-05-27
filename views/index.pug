@@ -3,3 +3,8 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  button(onclick='window.location.href = window.location.href + "users/signup"') Sign Up
+  button(onclick='window.location.href = window.location.href + "users/login"') Log in
+  button(onclick='window.location.href = window.location.href + "posts/all"') Posts
+  button(onclick='window.location.href = window.location.href + "posts/write"') Write Post
+
