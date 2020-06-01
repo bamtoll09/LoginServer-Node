@@ -51,18 +51,20 @@ router.get('/write', function(req, res) {
 router.post('/write', function(req, res) {
 // write post
   const postId = new global.mongoose.Types.ObjectId;
+  var writer = req.body.writer;
+  if (!writer) writer = "5ece8039e45f9c2d9b4808dd";
   Posts.create({
-    _id: postId,
-    title: req.body.title,
-    contents: req.body.contents,
-    date: getTimeStamp(),
-    writer: req.body.writer
+    "_id": postId,
+    "title": req.body.title,
+    "contents": req.body.contents,
+    "date": getTimeStamp(),
+    "writer": writer
   });
 // add writer by session
 
 // update user posts
   console.log("TYPEOF_POST_ID: " + postId.toString());
-  Users.findByIdAndUpdate(req.body.writer, { $push: { posts: postId.toString() } }, function() {} );
+  Users.findByIdAndUpdate(writer, { $push: { posts: postId.toString() } }, function() {} );
 
 // success  
   res.status(200).render('result', {result: "Write Success!"});
