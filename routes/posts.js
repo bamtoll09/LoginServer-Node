@@ -58,7 +58,8 @@ router.post('/write', function(req, res) {
     "title": req.body.title,
     "contents": req.body.contents,
     "date": getTimeStamp(),
-    "writer": writer
+    "writer": writer,
+    'type': req.body.type
   });
 // add writer by session
 

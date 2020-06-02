@@ -2,7 +2,8 @@ extends layout
 
 block content
   form(action='/posts/write' method='POST')
-    input(name='title' placeholder='title')
-    input(name='contents' placeholder='contents')
-    input(name='writer' placeholder='writer')
+    input(name='title' placeholder='title' required)
+    input(name='contents' placeholder='contents' required)
+    input(name='writer' placeholder='writer' required)
+    input(type='number' name='type' placeholder='type' min='0' max='1' required)
     button(type='submit') write

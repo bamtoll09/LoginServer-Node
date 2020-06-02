@@ -6,7 +6,8 @@ var postSchema = new Schema({
     title: String,
     contents: String,
     date: String,
-    writer: Schema.Types.ObjectId
+    writer: Schema.Types.ObjectId,
+    type: Number
 });
 
 module.exports = postSchema;
