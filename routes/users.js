@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var global = require('./global');
+var mongoose = require('mongoose');
 var UserSchema = require('../db/userSchema');
-var Users = global.mongoose.model('Users', UserSchema);
+var Users = mongoose.model('Users', UserSchema);
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -20,7 +20,7 @@ router.get('/signup', function(req, res) {
 
 router.post('/signup', function(req, res) {
   Users.create({
-    _id: new global.mongoose.Types.ObjectId,
+    _id: new mongoose.Types.ObjectId,
     id: req.body.id,
     pw: req.body.pw
   });

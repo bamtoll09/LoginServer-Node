@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-var global = require('./global');
+var mongoose = require('mongoose');
 var PostSchema = require('../db/postSchema');
-var Posts = global.mongoose.model('Posts', PostSchema);
+var Posts = mongoose.model('Posts', PostSchema);
 
 var UserSchema = require('../db/userSchema');
-var Users = global.mongoose.model('Users', UserSchema);
+var Users = mongoose.model('Users', UserSchema);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -50,7 +50,7 @@ router.get('/write', function(req, res) {
 
 router.post('/write', function(req, res) {
 // write post
-  const postId = new global.mongoose.Types.ObjectId;
+  const postId = new mongoose.Types.ObjectId;
   var writer = req.body.writer;
   if (!writer) writer = "5ece8039e45f9c2d9b4808dd";
   Posts.create({
