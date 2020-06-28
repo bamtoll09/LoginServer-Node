@@ -6,6 +6,7 @@ var PostSchema = require('../db/postSchema');
 var Posts = mongoose.model('Posts', PostSchema);
 
 var UserSchema = require('../db/userSchema');
+
 var Users = mongoose.model('Users', UserSchema);
 
 /* GET home page. */
@@ -13,8 +14,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Posts' });
 });
 
-router.get('/all', function(req, res) {
+router.get('/all', function(req, res, next) {
   res.writeHead(200, {'Content-Type': 'text/json; charset=utf-8'});
+  
+  // req.session.user.delete;
 
   var result;
   var writers = []
@@ -25,16 +28,16 @@ router.get('/all', function(req, res) {
     }
 
     Users.find({ '_id': { $in: writers } }, function(err, users) {
-      console.log(JSON.stringify(users));
+      // console.log(JSON.stringify(users));
       
       for (var i=0; i<result.length; ++i) {
         for (var j=0; j<users.length; ++j) {
-          console.log("WRITER: " + result[i].writer);
-          console.log("ID: " + users[j].id);
+          // console.log("WRITER: " + result[i].writer);
+          // console.log("ID: " + users[j].id);
           if (result[i].writer.toString() === users[j]._id.toString()) {
             result[i].writer = users[j].id;
-            console.log("WRITER2: " + result[i].writer);
-            console.log("FOUND!");
+            // console.log("WRITER2: " + result[i].writer);
+            // console.log("FOUND!");
           }
         }
       }

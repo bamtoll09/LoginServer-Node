@@ -30,23 +30,51 @@ router.post('/signup', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-  res.render('login');
+  if (!req.sessionID) {
+    res.render('login');
+  } else {
+    // res.writeHead(200, {"Content-Type" : "text/html; charset=utf-8"});
+    res.send("<h1>Already Logged in</h1>");
+    res.end();
+
+    console.log("[LOGIN-SESSION] sessionID: " + req.sessionID);
+  }
 });
 
-router.post('/login', function(req, res) {
-  Users.findOne({"id": req.body.id}, function(err, result) {
-    if (result.pw == req.body.pw) {
-      // res.writeHead(200, {"Context-Type" : "application/json; charset=utf-8"});
-      res.status(200).render('result', {result: "Login Success!"});
-      console.log("Login Success!");
-    } else {
-      // res.writeHead(404, {"Context-Type" : "application/json; charset=utf-8"});'
-      // res.send(404);
-      res.status(404).render('result', {result: "Login Fail!"});
-      console.log("Login Fail!");
-    }
+router.post('/login', function (req, res) {
+  if (req.sessionID) {
+    // res.writeHead(200, {"Content-Type" : "application/html; charset=utf-8"});
+    res.send("<h1>Already Log inned</h1>");
     res.end();
-  });
+
+    console.log("[LOGIN-SESSION] sessionID: " + req.sessionID);
+  } else {
+    Users.findOne({ "id": req.body.id }, function (err, result) {
+      if (err || !result) {
+        res.status(404).render('result', { result: "Login Fail!" });
+        console.log("Login Fail!");
+        res.end();
+      } else {
+        if (result.pw == req.body.pw) {
+          // res.writeHead(200, {"Content-Type" : "application/json; charset=utf-8"});
+          req.session.user = result;
+          req.session.save(function () {
+            console.log("[SESSION] saved");
+            console.log("[SESSION] sessionID: " + req.sessionID);
+          });
+          res.status(200).render('result', { result: "Login Success!" });
+          console.log("Login Success!");
+        } else {
+          // res.writeHead(404, {"Content-Type" : "application/json; charset=utf-8"});'
+          // res.send(404);
+          res.status(404).render('result', { result: "Login Fail!" });
+          console.log("Login Fail!");
+        }
+        res.end();
+      }
+    });
+  }
+  req.session.destroy();
 });
 
 module.exports = router;

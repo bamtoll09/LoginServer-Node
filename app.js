@@ -10,6 +10,8 @@ var postsRouter = require('./routes/posts');
 
 var app = express();
 
+var sessionParser = require('express-session');
+
 var mongoose = require('mongoose');
 var db = mongoose.connection;
 
@@ -34,6 +36,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(sessionParser({
+  secret: 'sesesesesesese',
+  resave: true,
+  saveUninitialized: true
+}));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
