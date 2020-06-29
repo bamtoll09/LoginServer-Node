@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(sessionParser({
   secret: 'sesesesesesese',
-  resave: true,
+  resave: false,
   saveUninitialized: true
 }));
 

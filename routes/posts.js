@@ -15,9 +15,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/all', function(req, res, next) {
-  res.writeHead(200, {'Content-Type': 'text/json; charset=utf-8'});
+  // res.writeHead(200, {'Content-Type': 'text/json; charset=utf-8'});
   
-  // req.session.user.delete;
+  var sess = req.session;
+  // sess.destroy();
 
   var result;
   var writers = []

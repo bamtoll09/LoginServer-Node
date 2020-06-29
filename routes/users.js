@@ -30,24 +30,33 @@ router.post('/signup', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-  if (!req.sessionID) {
+  var sess = req.session;
+
+  if (!sess.user) {
     res.render('login');
   } else {
     // res.writeHead(200, {"Content-Type" : "text/html; charset=utf-8"});
     res.send("<h1>Already Logged in</h1>");
     res.end();
 
+    console.log("Already Logged in!");
     console.log("[LOGIN-SESSION] sessionID: " + req.sessionID);
+    console.log("[LOGIN-SESSION] session.user.id: " + sess.user.id);
   }
 });
 
 router.post('/login', function (req, res) {
-  if (req.sessionID) {
+  var sess = req.session;
+
+  console.log("[LOGIN-SESSION] sessionID: " + req.sessionID);
+
+  if (sess.user) {
     // res.writeHead(200, {"Content-Type" : "application/html; charset=utf-8"});
     res.send("<h1>Already Log inned</h1>");
     res.end();
 
-    console.log("[LOGIN-SESSION] sessionID: " + req.sessionID);
+    console.log("Already Logged in!");
+    console.log("[LOGIN-SESSION] session.user.id: " + sess.user.id);
   } else {
     Users.findOne({ "id": req.body.id }, function (err, result) {
       if (err || !result) {
@@ -57,10 +66,11 @@ router.post('/login', function (req, res) {
       } else {
         if (result.pw == req.body.pw) {
           // res.writeHead(200, {"Content-Type" : "application/json; charset=utf-8"});
-          req.session.user = result;
-          req.session.save(function () {
+          sess.user = result;
+          sess.save(function () {
             console.log("[SESSION] saved");
             console.log("[SESSION] sessionID: " + req.sessionID);
+            console.log("[SESSION] session.user.id: " + sess.user.id);
           });
           res.status(200).render('result', { result: "Login Success!" });
           console.log("Login Success!");
@@ -74,7 +84,7 @@ router.post('/login', function (req, res) {
       }
     });
   }
-  req.session.destroy();
+  sess.destroy();
 });
 
 module.exports = router;
