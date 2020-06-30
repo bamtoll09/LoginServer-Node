@@ -84,7 +84,22 @@ router.post('/login', function (req, res) {
       }
     });
   }
-  sess.destroy();
+  // sess.destroy(); // Holy Mxxxer Fxxking Shxx
+});
+
+router.get('/logout', function(req, res) {
+  var sess = req.session;
+
+  if (sess.user) {
+    sess.destroy(function(err) {
+      console.log("[LOGOUT-SESSION] destroyed");
+    });
+    res.render('result', { result: "Logout Success!"});
+  } else {
+    res.render('result', { result: "Already Logged Out."});
+  }
+
+  res.end();
 });
 
 module.exports = router;
