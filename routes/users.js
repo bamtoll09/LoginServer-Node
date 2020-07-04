@@ -19,11 +19,11 @@ router.get('/signup', function(req, res) {
 });
 
 router.post('/signup', function(req, res) {
-  Users.create({
+  /* Users.create({
     _id: new mongoose.Types.ObjectId,
     id: req.body.id,
     pw: req.body.pw
-  });
+  }); */
 
   res.render('result', {result: "Success!"});
   res.end();
