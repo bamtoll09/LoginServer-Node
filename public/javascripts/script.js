@@ -4,7 +4,7 @@ var checkPasswordAtSignUp = function() {
     var btnSubmit = document.getElementById("submit");
 
     if (inputPass) {
-        inputPass.onkeydown = function() {
+        inputPass.onkeyup = function() {
             if ( inputPass.value === inputRePass.value ) {
                 btnSubmit.disabled = false;
                 console.log("true");
@@ -13,7 +13,7 @@ var checkPasswordAtSignUp = function() {
                 console.log("false");
             }
         } 
-        inputRePass.onkeydown = function() {
+        inputRePass.onkeyup = function() {
             if ( inputPass.value === inputRePass.value ) {
                 btnSubmit.disabled = false;
                 console.log("true");

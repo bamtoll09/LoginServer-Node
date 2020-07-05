@@ -10,6 +10,12 @@ block content
 
   else
     button(onclick='window.location.href = window.location.href + "users/logout"') Log out
-    button(onclick='window.location.href = window.location.href + "posts/all"') Posts
-    button(onclick='window.location.href = window.location.href + "posts/write"') Write Post
+
+    if isAuthorized
+      button(onclick='window.location.href = window.location.href + "posts/all"') Posts
+      button(onclick='window.location.href = window.location.href + "posts/write"') Write Post
+
+    else
+      button(onclick='window.location.href = window.location.href + "users/auth"') Authorize Email
+      button(onclick='window.location.href = window.location.href + "users/resend"') Resend Authorization Code
 

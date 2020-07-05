@@ -1,0 +1,6 @@
+extends layout
+
+block content
+  form(action='/users/auth', method='POST')
+    input(type='number' name='code' placeholder='Authorize Code' required)
+    input(type="submit" value='Authorize') 
