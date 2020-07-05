@@ -6,7 +6,6 @@ var UserSchema = require('../db/userSchema');
 var Users = mongoose.model('Users', UserSchema);
 
 var transporter = require('../data/mailer');
-const { render } = require('pug');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
