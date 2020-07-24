@@ -23,9 +23,10 @@ router.get('/signup', function(req, res) {
 
 router.post('/signup', function(req, res) {
   var authCode = Math.floor(Math.random() * 10000).toString();
+  var id = new mongoose.Types.ObjectId;
 
   Users.create({
-    _id: new mongoose.Types.ObjectId,
+    _id: id,
     email: req.body.email,
     id: req.body.id,
     pw: req.body.pw,
@@ -34,11 +35,16 @@ router.post('/signup', function(req, res) {
     posts: []
   });
 
+  var link = 'http://' + req.get('host') + '/users/auth?key=' + makeKey(id, authCode);
+  console.log(link);
+
   var mailOptions = {
     from: 'devPBstudio@gmail.com',
     to: req.body.email,
     subject: '[LoginServer] Authorize Your Email',
-    text: 'The code is ' + authCode
+    generateTextFromHTML: true,
+    html: '<p>Please enter this link to authorize your email: </p>' +
+    '<a href="' + link + '">' + link + '</a>'
   };
 
   transporter.sendMail(mailOptions, function(err, info) {
@@ -131,37 +137,34 @@ router.get('/logout', function(req, res) {
 // authorize code
 router.get('/auth', function(req, res) {
   var sess = req.session;
+  var key = req.query.key;
 
-  if (sess.user) {
-    res.render('auth');
-    res.end();
-  } else {
-    // res.writeHead(200, {"Content-Type" : "text/html; charset=utf-8"});
-    res.send("<h1>Please Log in</h1>");
-    res.end();
-  }
-});
+  decoded = decode(key);
 
-router.post('/auth', function(req, res) {
-  var sess = req.session;
+  var id = decoded[0];
+  var code = decoded[1];
 
-  if (sess.user) {
-    if (sess.user.code == "xxxx") {
-      res.render('result', { result: "Your email is alreay authorized." });
+  console.log("[AUTH] id: " + id);
+  console.log("[AUTH] code: " + code);
+
+  Users.findById(id.toString(), function(err, result) { // findBy"_id"
+    if (err) {
+      res.render('result', { result: 'Error 1: Link Crashed.' });
     } else {
-      if (req.body.code == sess.user.code) {
-        sess.user.code = "xxxx";
+      // console.log(result);
+      if (result.code == "xxxx") {
+        res.render('result', { result: "Your email is alreay authorized." });
+      } else if (result.code == code) {
         res.render('result', { result: "Your email is Authorized!" });
+        Users.updateOne({'_id': id }, { 'code':  "xxxx" }, function(err, raw) {
+          if (err) console.log(err);
+        });
       } else {
-        res.render('result', { result: "Code isn't same. Please check it again." });
+        res.render('result', { result: 'Error 2: Link Crashed.' });
       }
     }
     res.end();
-  } else {
-    // res.writeHead(200, {"Content-Type" : "text/html; charset=utf-8"});
-    res.send("<h1>Please Log in</h1>");
-    res.end();
-  }
+  });
 });
 
 // resend authorization code
@@ -173,11 +176,19 @@ router.get('/resend', function(req, res) {
     
     sess.user.code = authCode;
 
+    Users.updateOne({'_id': sess.user._id }, { 'code':  authCode }, function(err, raw) {
+      if (err) console.log(err);
+    });
+
+    var link = 'http://' + req.get('host') + '/users/auth?key=' + makeKey(sess.user._id, authCode);
+
     var mailOptions = {
       from: 'devPBstudio@gmail.com',
       to: sess.user.email,
       subject: '[LoginServer] Authorize Your Email',
-      text: 'The code is ' + authCode
+      generateTextFromHTML: true,
+      html: '<p>Please enter this link to authorize your email: </p>' +
+      '<a href="' + link + '">' + link + '</a>'
     };
   
     transporter.sendMail(mailOptions, function(err, info) {
@@ -221,6 +232,45 @@ function leadingZeros(n, digits) {
       zero += '0';
   }
   return zero + n;
+}
+
+function makeKey(id, code) {
+  _code = code.toString(16);
+  _id = id.toString();
+  console.log('[AUTH] _id: ' + _id + '\n_code: ' + _code);
+  var res = '';
+
+  while (_code.length < 4) {
+    _code = "0" + _code;
+  }
+  
+  for (var i=1; i<=8; ++i) {
+    if (i%2 == 0) res += _code[i/2 - 1];
+    else res += _id[parseInt(i/2)];
+  }
+
+  res += _id.substring(4, _id.length);
+
+  console.log("[MAKEKEY] res: " + res);
+
+  return res;
+}
+
+function decode(key) {
+  var id = "";
+  var code = "";
+
+  for (var i=1; i<=8; ++i) {
+    if (i%2 == 0) code += key[i-1];
+    else id += key[i-1];
+  }
+
+  id += key.substring(8, key.length);
+
+  console.log('[DECODE] id:' + id);
+  console.log('[DECODE] code:' + code);
+
+  return [id, code];
 }
 
 module.exports = router;
