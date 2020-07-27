@@ -206,7 +206,24 @@ router.get('/resend', function(req, res) {
     res.send("<h1>Please Log in</h1>");
     res.end();
   }
-  
+});
+
+//get user settings
+router.get('/settings', function(req, res) {
+  // res.writeHead(200, {"Content-Type" : "text/json; charset=utf-8"});
+  var sess = req.session;
+
+  if (sess.user) {
+    var isAuthorized = (sess.user.code == "xxxx");
+
+    var output = JSON.parse('{}');
+    output.isAuthorized = isAuthorized;
+    res.status(200).send(JSON.stringify(output));
+    res.end();
+  } else {
+    res.status(300).send("<h1>Please Log in</h1>");
+    res.end();
+  }
 });
 
 function getTimeStamp() {
